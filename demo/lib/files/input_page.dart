@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:yasam_dongusu/files/cinsiyet.dart';
@@ -17,17 +19,12 @@ class _InputPageState extends State<InputPage> {
   double sporGunu = 3;
   int boy = 150;
   int kilo = 60;
+  Timer _timer;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'YAŞAM BEKLENTİSİ',
-          style: TextStyle(color: Colors.black54),
-        ),
-        centerTitle: true,
-      ),
+      appBar: buildAppBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -202,6 +199,16 @@ class _InputPageState extends State<InputPage> {
     );
   }
 
+  AppBar buildAppBar() {
+    return AppBar(
+      title: Text(
+        'YAŞAM BEKLENTİSİ',
+        style: TextStyle(color: Colors.black54),
+      ),
+      centerTitle: true,
+    );
+  }
+
   buildRowOutlineButton(
     String label,
   ) {
@@ -234,31 +241,57 @@ class _InputPageState extends State<InputPage> {
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                  minimumSize: Size(40, 40),
-                  side: BorderSide(
-                    color: Colors.lightBlue,
-                  )),
-              child: Icon(FontAwesomeIcons.plus, size: 10),
-              onPressed: () {
-                setState(() {
-                  label == "BOY" ? boy++ : kilo++;
+            GestureDetector(
+              onLongPressStart: (details) {
+                Timer.periodic(Duration(milliseconds: 100), (timer) {
+                  setState(() {
+                    _timer = timer;
+                    label == "BOY" ? boy++ : kilo++;
+                  });
                 });
               },
-            ),
-            OutlinedButton(
+              onLongPressEnd: (details) {
+                _timer.cancel();
+              },
+              child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
                     minimumSize: Size(40, 40),
                     side: BorderSide(
                       color: Colors.lightBlue,
                     )),
-                child: Icon(FontAwesomeIcons.minus, size: 10),
+                child: Icon(FontAwesomeIcons.plus, size: 10),
                 onPressed: () {
                   setState(() {
+                    label == "BOY" ? boy++ : kilo++;
+                  });
+                },
+              ),
+            ),
+            GestureDetector(
+              onLongPressStart: (details) {
+                Timer.periodic(Duration(milliseconds: 100), (timer) {
+                  setState(() {
+                    _timer = timer;
                     label == "BOY" ? boy-- : kilo--;
                   });
-                }),
+                });
+              },
+              onLongPressEnd: (details) {
+                _timer.cancel();
+              },
+              child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                      minimumSize: Size(40, 40),
+                      side: BorderSide(
+                        color: Colors.lightBlue,
+                      )),
+                  child: Icon(FontAwesomeIcons.minus, size: 10),
+                  onPressed: () {
+                    setState(() {
+                      label == "BOY" ? boy-- : kilo--;
+                    });
+                  }),
+            ),
           ],
         ),
       ],
